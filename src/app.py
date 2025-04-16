@@ -110,9 +110,14 @@ def signup_for_activity(activity_name: str, email: str):
     if len(activity["participants"]) >= activity["max_participants"]:
         raise HTTPException(status_code=400, detail="Maximum participants reached")
     
-    # Check if already signed up
+    # Validate student is not already signed up
     if email in activity["participants"]:
-        raise HTTPException(status_code=400, detail="Already signed up for this activity")
+        raise HTTPException(status_code=400, detail="Student already signed up for this activity")
+    
+    # Validate student is not signing up for more than one activity
+    for act in activities.values():
+        if email in act["participants"]:
+            raise HTTPException(status_code=400, detail="Student already signed up for another activity")
     
     # Add student
     activity["participants"].append(email)
